@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthApp - Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="image-section">
+            <h1>HEALTH APP</h1>
+            <p>Empowering Healthcare, One Click at a Time: Your Health, Your Records, Your Control.</p>
+        </div>
+
+        <div class="form-section">
+            <div class="login-box">
+                <div class="logo">🩺 Sign Up</div>
+                <p>Create your HealthApp account</p>
+
+                <form method="POST">
+                    <label>Username</label>
+                    <input name="username" type="text" placeholder="Choose a username" required>
+
+                    <label>Password</label>
+                    <input name="password" type="password" placeholder="Create a password" required>
+
+                    <button type="submit" class="btn-primary">Create Account</button>
+                </form>
+
+                <div class="links">
+                    Already have an account? <a href="{{ url_for('login') }}">Log In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

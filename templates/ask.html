@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Medical AI Assistant</h2>
+        <span class="badge bg-success">Phi-3 Model Active</span>
+    </div>
+
+    <div class="card query-card">
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Ask anything about your reports:</label>
+                    <textarea name="question" class="form-control form-control-lg" rows="3"
+                        placeholder="e.g. What are the recommended activity levels for adults?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary px-4 py-2">Ask AI Assistant</button>
+            </form>
+        </div>
+    </div>
+
+    {% if answer %}
+    <div class="card query-card">
+        <div class="card-header bg-white fw-bold">AI Response</div>
+        <div class="card-body">
+            <p class="text-muted small mb-1">Your Question: <em>{{ question }}</em></p>
+            <div class="ai-answer-box mb-3">
+                {{ answer }}
+            </div>
+            <div class="mt-2">
+                <strong>AI Confidence:</strong>
+                <span
+                    class="badge {% if conf > 80 %}bg-success{% elif conf > 50 %}bg-warning text-dark{% else %}bg-danger{% endif %}">
+                    {{ conf }}%
+                </span>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted"><strong>Source:</strong> {{ source }}</small>
+                <span class="badge rounded-pill bg-info text-dark">Verified via RAG</span>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

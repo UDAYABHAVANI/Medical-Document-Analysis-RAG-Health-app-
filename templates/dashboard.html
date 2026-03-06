@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* 1. THICK BLUE BANNER */
+    .welcome-banner {
+        background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(34, 74, 190, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    /* Optional: Add a subtle welcome icon to the banner too */
+    .welcome-banner::after {
+        content: '\f496';
+        /* FA Hand Wave Icon */
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        position: absolute;
+        right: -20px;
+        bottom: -30px;
+        font-size: 8rem;
+        opacity: 0.1;
+        transform: rotate(15deg);
+    }
+
+    /* 2. SKY BLUE CARDS WITH BACKGROUND IMAGES */
+    .sky-card {
+        /* Sky Blue Gradient */
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border: none;
+        border-radius: 1rem;
+        /* Changed alignment for better look with bg icon */
+        padding: 2.5rem 2rem;
+        text-align: left;
+        color: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        height: 100%;
+        position: relative;
+        /* Needed for absolute bg icon */
+        overflow: hidden;
+        /* Clips the huge icon */
+        z-index: 1;
+    }
+
+    .sky-card:hover {
+        transform: translateY(-7px);
+        box-shadow: 0 15px 30px rgba(79, 172, 254, 0.4);
+    }
+
+    /* Styles for the main icon on top */
+    .card-content-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Ensure text is on top of the background image */
+    .sky-card-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* --- THE BIG BACKGROUND ILLUSTRATIONS --- */
+    .sky-card::after {
+        font-family: "Font Awesome 5 Free";
+        /* Essential for FA to work in CSS */
+        font-weight: 900;
+        position: absolute;
+        bottom: -2.5rem;
+        right: -2.5rem;
+        font-size: 11rem;
+        /* Huge size */
+        opacity: 0.15;
+        /* Very subtle transparency */
+        transform: rotate(-15deg);
+        z-index: 0;
+        /* Behind the content */
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    /* Slight movement on hover */
+    .sky-card:hover::after {
+        transform: rotate(0deg) scale(1.05);
+        opacity: 0.2;
+    }
+
+    /* Specific Icons for each box */
+    .card-upload::after {
+        content: '\f07c';
+    }
+
+    /* Folder Open Icon */
+    .card-ai::after {
+        content: '\f544';
+    }
+
+    /* Robot Icon */
+    .card-history::after {
+        content: '\f017';
+    }
+
+    /* Clock Icon */
+
+
+    /* 3. TABLE STYLES */
+    .table-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    }
+
+    .table-header {
+        background-color: white;
+        border-bottom: 1px solid #e3e6f0;
+        padding: 1.5rem;
+        border-radius: 1rem 1rem 0 0;
+    }
+</style>
+
+<div class="container-fluid p-4">
+
+    <div class="welcome-banner">
+        <div style="position: relative; z-index: 2;">
+            <h1 class="h2 fw-bold mb-2">Welcome back, {{ current_user.username }}!</h1>
+            <p class="mb-0" style="opacity: 0.9;">Your health data is ready for analysis.</p>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4">
+            <div class="sky-card card-upload" onclick="location.href='/upload'">
+                <div class="sky-card-content">
+                    <i class="fas fa-folder-open card-content-icon"></i>
+                    <h3 class="fw-bold">Upload Files</h3>
+                    <p class="mb-0 small opacity-90">Analyze new medical reports</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="sky-card card-ai" onclick="location.href='/ask'">
+                <div class="sky-card-content">
+                    <i class="fas fa-robot card-content-icon"></i>
+                    <h3 class="fw-bold">Ask AI Assistant</h3>
+                    <p class="mb-0 small opacity-90">Get instant answers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="sky-card card-history" onclick="location.href='/history'">
+                <div class="sky-card-content">
+                    <i class="fas fa-clock card-content-icon"></i>
+                    <h3 class="fw-bold">Query History</h3>
+                    <p class="mb-0 small opacity-90">Review past consultations</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card table-card mb-4">
+        <div class="table-header d-flex justify-content-between align-items-center">
+            <h5 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-list-alt me-2"></i> Recent Activity
+            </h5>
+            <a href="{{ url_for('history') }}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View All</a>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light text-secondary small text-uppercase fw-bold">
+                        <tr>
+                            <th class="ps-4 py-3 border-0">Date</th>
+                            <th class="py-3 border-0">Question</th>
+                            <th class="py-3 border-0">Confidence</th>
+                            <th class="py-3 border-0">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if recent_activity %}
+                        {% for item in recent_activity %}
+                        <tr style="cursor: pointer;" onclick="location.href='/history'">
+                            <td class="ps-4 py-3 fw-bold text-dark">{{ item.timestamp.strftime('%Y-%m-%d') }}</td>
+                            <td class="py-3 text-truncate text-secondary fw-bold" style="max-width: 350px;">
+                                {{ item.question_text }}
+                            </td>
+                            <td class="py-3">
+                                <span class="badge rounded-pill px-3 py-2
+                                        {% if item.confidence_score > 80 %}bg-success
+                                        {% elif item.confidence_score > 50 %}bg-warning text-dark
+                                        {% else %}bg-danger{% endif %}">
+                                    {{ item.confidence_score }}%
+                                </span>
+                            </td>
+                            <td class="py-3">
+                                {% if item.is_correct %}
+                                <span class="text-success small fw-bold"><i class="fas fa-check-circle"></i>
+                                    Verified</span>
+                                {% else %}
+                                <span class="text-muted small">Pending</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-5 text-muted">
+                                No recent activity. <a href="/upload">Upload a file</a> to start!
+                            </td>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

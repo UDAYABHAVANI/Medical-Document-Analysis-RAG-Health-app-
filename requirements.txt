@@ -1,0 +1,10 @@
+Flask
+Flask-Login
+pandas
+openpyxl
+chromadb
+ollama
+pyodbc
+PyMuPDF
+requests
+numpy

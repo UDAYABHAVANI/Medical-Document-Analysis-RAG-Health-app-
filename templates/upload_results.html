@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>✅ Analysis Complete</h2>
+        <a href="{{ url_for('history') }}" class="btn btn-outline-primary">View Full History</a>
+    </div>
+    <div class="mb-4 text-end">
+        <a href="{{ url_for('static', filename=report_file) }}" class="btn btn-success" download>
+            <i class="fas fa-download"></i> Download Analysis Report
+        </a>
+    </div>
+    <div class="alert alert-info">
+        We found <strong>{{ results|length }}</strong> questions in your file. Here are the AI insights:
+    </div>
+
+    {% for item in results %}
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <h5 class="text-primary border-bottom pb-2">Question: {{ item.question }}</h5>
+            <p class="mt-3"><strong>AI Insight:</strong> {{ item.answer }}</p>
+
+            <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top">
+                <small class="text-muted">📄 Source: {{ item.source }}</small>
+                <div style="width: 150px;">
+                    <small>Confidence: {{ item.confidence }}%</small>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar {% if item.confidence > 80 %}bg-success{% else %}bg-warning{% endif %}"
+                            style="width: {{ item.confidence }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="text-center mt-4 mb-5">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}
+<script>
+    function downloadPDF() {
+        // This collects the results that the AI just generated
+        const results = {{ results | tojson
+    }};
+
+    fetch('/download_results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ results: results })
+    })
+        .then(response => {
+            if (!response.ok) throw new Error('PDF Generation Failed');
+            return response.blob();
+        })
+        .then(blob => {
+            // This triggers the actual file download in your browser
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Medical_Analysis_Report.pdf";
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url); // Clean up memory
+        })
+        .catch(error => {
+            console.error("Download Error:", error);
+            alert("Download failed. Please check your VS Code terminal for errors.");
+        });
+}
+</script>

@@ -1,0 +1,14 @@
+# Python and Flask
+__pycache__/
+*.pyc
+venv/
+env/
+.env
+
+# Project Specific
+chroma_db/
+uploads/
+*.db
+
+# VS Code
+.vscode/

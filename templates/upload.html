@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Upload Medical Data - HealthApp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <nav class="sidebar">
+            <div class="logo">🩺</div>
+
+            <a href="{{ url_for('dashboard') }}" title="Dashboard">🏠</a>
+
+            <a href="{{ url_for('upload_file') }}" class="active" title="Upload Files">📄</a>
+
+            <a href="{{ url_for('ask') }}" title="Ask AI">🤖</a>
+
+            <a href="{{ url_for('history') }}" title="History">📜</a>
+        </nav>
+
+        <main class="content">
+            <h1>Upload Medical Data</h1>
+
+            <div class="card" style="max-width: 600px; padding: 40px; margin-top: 30px; text-align: left;">
+                <h3 style="color: #1a1b4b; margin-bottom: 10px;">Select Document</h3>
+                <p style="font-size: 14px; color: #666; margin-bottom: 25px;">
+                    Upload <b>PDFs</b> for reference context or <b>Excel</b> files containing questions.
+                </p>
+
+                <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+                    <div style="margin-bottom: 30px;">
+                        <input type="file" name="file" id="fileInput" accept=".pdf, .xlsx, .xls" required>
+                    </div>
+
+                    <button type="submit" style="
+                        background-color: #1a1b4b; 
+                        color: white; 
+                        width: 100%; 
+                        padding: 20px; 
+                        border: none; 
+                        border-radius: 15px; 
+                        font-size: 18px; 
+                        font-weight: bold; 
+                        cursor: pointer;">
+                        Upload Now
+                    </button>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

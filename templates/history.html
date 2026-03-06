@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h2><i class="fas fa-file-medical-alt me-2 text-primary"></i>Consultation History</h2>
+
+        <div class="nav nav-pills" id="pills-tab" role="tablist">
+            <button class="nav-link active me-2" id="my-tab" data-bs-toggle="pill" data-bs-target="#pills-my"
+                type="button" role="tab">
+                <i class="fas fa-user me-1"></i> User History
+            </button>
+            <button class="nav-link shadow-sm" id="all-tab" data-bs-toggle="pill" data-bs-target="#pills-all"
+                type="button" role="tab">
+                <i class="fas fa-users me-1"></i> Team History
+            </button>
+            <a href="{{ url_for('uploaded_files') }}" class="nav-link shadow-sm ms-2 text-dark bg-white border"
+                style="text-decoration: none;">
+                <i class="fas fa-file-pdf me-1 text-danger"></i> Uploaded Files
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="fas fa-search text-muted"></i>
+                </span>
+                <input type="text" id="historySearch" class="form-control border-start-0 ps-0"
+                    placeholder="Search questions, insights, or sources..." onkeyup="filterHistory()">
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="pills-tabContent">
+
+        <div class="tab-pane fade show active" id="pills-my" role="tabpanel">
+            {% if not my_history %}
+            <div class="alert alert-light text-center border-dashed py-5">
+                <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+                <p class="text-muted">You haven't asked any questions yet.</p>
+            </div>
+            {% endif %}
+
+            {% for item in my_history %}
+            <div class="card mb-3 shadow-sm border-0 history-card">
+                <div class="card-body p-0">
+                    <div class="row g-0">
+                        <div
+                            class="col-md-2 bg-light border-end p-3 d-flex flex-column align-items-center justify-content-between text-center">
+                            <div>
+                                <small class="text-muted fw-bold d-block mb-2">{{ item.asked_at.strftime('%d %b %Y')
+                                    }}</small>
+
+                                <div class="confidence-badge mb-3">
+                                    <small class="text-uppercase fw-bold text-muted d-block"
+                                        style="font-size: 0.65rem;">Confidence</small>
+                                    <span class="badge w-100 py-2 
+                                        {% if item.confidence|default(0) > 80 %}bg-success
+                                        {% elif item.confidence|default(0) > 50 %}bg-primary
+                                        {% elif item.confidence|default(0) > 20 %}bg-warning
+                                        {% else %}bg-danger{% endif %}">
+                                        Confidence: {{ item.confidence|default(0) }}%
+                                    </span>
+                                </div>
+
+                                <div class="form-check form-switch mb-3 d-flex flex-column align-items-center">
+                                    <input class="form-check-input ms-0" type="checkbox" name="is_correct"
+                                        form="updateForm{{item.id}}" {% if item.is_verified %}checked{% endif %}>
+                                    <label class="small fw-bold mt-1 text-primary">Correct</label>
+                                </div>
+                            </div>
+
+                            <div class="w-100 px-2">
+                                <button type="submit" form="updateForm{{item.id}}"
+                                    class="btn btn-primary btn-sm w-100 mb-2 py-1">
+                                    <i class="fas fa-save me-1"></i> Save
+                                </button>
+                                <form action="{{ url_for('delete_history', answer_id=item.id) }}" method="POST"
+                                    onsubmit="return confirm('Delete this record?');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 py-1">
+                                        <i class="fas fa-trash-alt me-1"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="col-md-10 p-3">
+                            <form id="updateForm{{item.id}}" action="{{ url_for('update_answer', answer_id=item.id) }}"
+                                method="POST">
+                                <h6 class="text-primary fw-bold mb-2">Q: {{ item.question_text }}</h6>
+
+                                <textarea name="answer_text"
+                                    class="form-control border-0 p-0 shadow-none text-muted mb-3" rows="6"
+                                    style="resize: none; font-size: 0.95rem; line-height: 1.6; background: transparent;">{{ item.answer_text }}</textarea>
+
+                                <div class="border-top pt-2 d-flex justify-content-between align-items-center">
+                                    <small class="text-muted text-truncate" style="max-width: 80%;">
+                                        <i class="fas fa-file-pdf me-1 text-danger"></i> Source: {{ item.source_info }}
+                                    </small>
+                                    <span
+                                        class="badge {% if item.is_verified %}bg-success-soft text-success{% else %}bg-warning-soft text-warning{% endif %} px-3">
+                                        {% if item.is_verified %}VERIFIED{% else %}PENDING REVIEW{% endif %}
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="tab-pane fade" id="pills-all" role="tabpanel">
+            <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="globalTable">
+                        <thead class="bg-light">
+                            <tr>
+                                <th class="ps-3 py-3">Date/Time</th>
+                                <th>User</th>
+                                <th>Question</th>
+                                <th>AI Insight</th>
+                                <th>Confidence</th>
+                                <th>Source File</th>
+                                <th class="text-center">Verified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in global_history %}
+                            <tr class="global-row">
+                                <td class="ps-3 small text-muted">{{ item.asked_at.strftime('%Y-%m-%d %H:%M') }}</td>
+
+                                <td>
+                                    <span class="badge rounded-pill bg-secondary bg-opacity-10 text-secondary px-3">
+                                        {{ item.username }}
+                                    </span>
+                                </td>
+
+                                <td class="small fw-bold">{{ item.question_text[:50] }}...</td>
+
+                                <td class="small text-muted">
+                                    {{ item.answer_text[:60] }}...
+                                    <a href="#" class="text-primary fw-bold text-decoration-none" data-bs-toggle="modal"
+                                        data-bs-target="#modal{{ item.id }}">
+                                        View More
+                                    </a>
+                                </td>
+
+                                <td>
+                                    <div class="progress mb-1" style="height: 6px; width: 100px;">
+                                        <div class="progress-bar 
+                    {% if item.confidence|default(0) > 80 %}bg-success
+                    {% elif item.confidence|default(0) > 50 %}bg-primary
+                    {% elif item.confidence|default(0) > 20 %}bg-warning
+                    {% else %}bg-danger{% endif %}" style="width: {{ item.confidence|default(0) }}%">
+                                        </div>
+                                    </div>
+                                    <small class="fw-bold 
+                {% if item.confidence|default(0) > 80 %}text-success
+                {% elif item.confidence|default(0) > 50 %}text-primary
+                {% elif item.confidence|default(0) > 20 %}text-warning
+                {% else %}text-danger{% endif %}">
+                                        {{ item.confidence|default(0) }}%
+                                    </small>
+                                </td>
+
+                                <td class="small text-truncate" style="max-width: 150px;">
+                                    {{ item.source_info }}
+                                </td>
+
+                                <td class="text-center">
+                                    {% if item.is_correct == 1 or item.is_verified == 1 %}
+                                    <span class="badge bg-success-soft text-success px-3 py-1 border border-success">
+                                        <i class="fas fa-check-circle me-1"></i> VERIFIED
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-warning-soft text-warning px-3 py-1 border border-warning">
+                                        <i class="fas fa-clock me-1"></i> PENDING
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+
+                            <div class="modal fade" id="modal{{ item.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content shadow-lg border-0">
+                                        <div class="modal-header bg-primary text-white">
+                                            <h5 class="modal-title"><i class="fas fa-robot me-2"></i>Full AI Insight
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white"
+                                                data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <div class="mb-3">
+                                                <label class="fw-bold text-muted small text-uppercase">Medical
+                                                    Question:</label>
+                                                <p class="fw-bold text-primary">{{ item.question_text }}</p>
+                                            </div>
+                                            <hr>
+                                            <div class="mb-3">
+                                                <label class="fw-bold text-muted small text-uppercase">Detailed
+                                                    Answer:</label>
+                                                <div class="p-3 bg-light rounded" style="white-space: pre-wrap;">{{
+                                                    item.answer_text }}</div>
+                                            </div>
+                                            <div class="d-flex justify-content-between text-muted small">
+                                                <span><i class="fas fa-file-pdf me-1"></i> Source: {{ item.source_info
+                                                    }}</span>
+                                                <span>Confidence: {{ item.confidence|default(0) }}%</span>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer bg-light">
+                                            <button type="button" class="btn btn-secondary px-4"
+                                                data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1);
+        border: 1px solid rgba(25, 135, 84, 0.2);
+    }
+
+    .bg-warning-soft {
+        background-color: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.2);
+    }
+
+    .history-card {
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        border: 1px solid #eee !important;
+        background: #fff;
+    }
+
+    .history-card:hover {
+        border-color: #0d6efd !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+        transform: translateY(-1px);
+    }
+
+    .btn-sm {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    textarea.form-control:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        background: #fcfcfc !important;
+    }
+
+    .confidence-badge .badge {
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}

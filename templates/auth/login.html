@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>HealthApp - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <div class="image-section">
+            <h1>HEALTH APP</h1>
+            <p>Empowering Healthcare, One Click at a Time: Your Health, Your Records, Your Control.</p>
+        </div>
+        <div class="form-section">
+            <div class="login-box">
+                <div class="logo"> 🩺Login</div>
+                <p>Log in to your account</p>
+                <form method="POST">
+                    <label>Username</label>
+                    <input name="username" placeholder="Enter your username" required>
+                    <label>Password</label>
+                    <input name="password" type="password" placeholder="Enter your password" required>
+                    <button type="submit" class="btn-primary">Log In</button>
+                </form>
+                <div class="links">
+                    Don't have an account? <a href="/register">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body,
+html {
+    margin: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Left Side: Medical Image Section */
+.image-section {
+    flex: 1;
+    /* Updated with your Shutterstock image link */
+    background: linear-gradient(rgba(0, 123, 255, 0.4), rgba(0, 123, 255, 0.4)),
+        url('https://www.shutterstock.com/image-vector/female-doctor-glasses-pensive-pose-600nw-2557338391.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 60px;
+    color: white;
+}
+
+/* Right Side: Form Section */
+.form-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.logo {
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    /* Rounded corners like image */
+    background: #f9f9f9;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    /* Pill-shaped button */
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.links {
+    font-size: 14px;
+    margin-top: 20px;
+    text-align: center;
+    color: #666;
+}

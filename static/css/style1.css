@@ -1,0 +1,59 @@
+:root {
+    --primary-blue: #0d6efd;
+    --sidebar-bg: #212529;
+    --light-gray: #f8f9fa;
+    --border-color: #dee2e6;
+}
+
+body {
+    background-color: #f4f7f6;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: var(--sidebar-bg);
+    padding-top: 20px;
+}
+
+.sidebar a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    color: #adb5bd;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    color: white;
+    background-color: var(--primary-blue);
+}
+
+/* Main Content Area */
+.main-content {
+    margin-left: 250px;
+    padding: 40px;
+}
+
+/* Card & Chat Styling */
+.query-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    margin-bottom: 25px;
+}
+
+.ai-answer-box {
+    background-color: #eef2f7;
+    border-left: 5px solid var(--primary-blue);
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+}
